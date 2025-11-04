@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ziyi-cai.site","root":"/blog/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简介 Fast Walsh-Hadamard Transform (FWT) 是用来解决一类二(\(K\))进制运算卷积问题的快速算法，可以理解为每一维大小为 \(2\)(\(K\)) 的高维快速傅里叶变换。这类问题的一般形式是，给定 \(A\) 和 \(B\)，求出 \(C\) 满足： \[ C_i&#x3D;\sum_{j\otimes k&#x3D;i}A_jB_k \] 其中 \(\otimes\) 是一种二">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fast Walsh-Hadamard Transform (in Base $K$)">
+<meta property="og:url" content="https://ziyi-cai.site/blog/2017/10/21/fast-Walsh-Hadamard-transform/index.html">
+<meta property="og:site_name" content="crazy_cloud&#39;s Blog">
+<meta property="og:description" content="简介 Fast Walsh-Hadamard Transform (FWT) 是用来解决一类二(\(K\))进制运算卷积问题的快速算法，可以理解为每一维大小为 \(2\)(\(K\)) 的高维快速傅里叶变换。这类问题的一般形式是，给定 \(A\) 和 \(B\)，求出 \(C\) 满足： \[ C_i&#x3D;\sum_{j\otimes k&#x3D;i}A_jB_k \] 其中 \(\otimes\) 是一种二">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-10-22T02:07:47.000Z">
+<meta property="article:modified_time" content="2025-11-04T03:38:22.934Z">
+<meta property="article:author" content="Ziyi Cai">
+<meta property="article:tag" content="FFT&#x2F;NTT&#x2F;FWT">
+<meta property="article:tag" content="原根">
+<meta property="article:tag" content="数论">
+<meta property="article:tag" content="构造">
+<meta property="article:tag" content="矩阵">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ziyi-cai.site/blog/2017/10/21/fast-Walsh-Hadamard-transform/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Fast Walsh-Hadamard Transform (in Base $K$) | crazy_cloud's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">crazy_cloud's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ziyi-cai.site/blog/2017/10/21/fast-Walsh-Hadamard-transform/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Ziyi Cai">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="crazy_cloud's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Fast Walsh-Hadamard Transform (in Base $K$)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-10-21 22:07:47" itemprop="dateCreated datePublished" datetime="2017-10-21T22:07:47-04:00">2017-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-11-03 22:38:22" itemprop="dateModified" datetime="2025-11-03T22:38:22-05:00">2025-11-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/%E5%AD%A6%E4%B9%A0%E5%B0%8F%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习小记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="简介">简介</h2>
+<p>Fast Walsh-Hadamard Transform (FWT) 是用来解决一类二(<span
+class="math inline">\(K\)</span>)进制运算卷积问题的快速算法，可以理解为每一维大小为
+<span class="math inline">\(2\)</span>(<span
+class="math inline">\(K\)</span>)
+的高维快速傅里叶变换。这类问题的一般形式是，给定 <span
+class="math inline">\(A\)</span> 和 <span
+class="math inline">\(B\)</span>，求出 <span
+class="math inline">\(C\)</span> 满足： <span class="math display">\[
+C_i=\sum_{j\otimes k=i}A_jB_k
+\]</span> 其中 <span class="math inline">\(\otimes\)</span>
+是一种二(<span class="math inline">\(K\)</span>)进制运算。</p>
+<p>本文将从回顾 FFT 开始，深入理解 FFT 的原理，然后再引出二进制的
+FWT。讨论 FWT 时，我们先会介绍 <span
+class="math inline">\(\mathrm{or}\)</span> 和 <span
+class="math inline">\(\mathrm{and}\)</span>
+运算卷积两种较为简单的情况，然后进一步介绍 <span
+class="math inline">\(\mathrm{xor}\)</span> 的复杂情况。最后我们会将
+<span class="math inline">\(\mathrm{xor}\)</span> 运算卷积推广至 <span
+class="math inline">\(K\)</span> 进制的情况。 <span id="more"></span> —</p>
+<h2 id="fft-原理">FFT 原理</h2>
+<p>笔者之前在学习 FFT 的时候，存在一个理解误区，就是以为 FFT
+实质上就是一种用来解决多项式乘法的特殊插值法：将 <span
+class="math inline">\(\omega_n^0, \cdots, \omega_n^{n-1}\)</span>, 这个
+<span class="math inline">\(n\)</span> 个主 <span
+class="math inline">\(n\)</span>
+次单位复数根代入求点值，然后插值回来。实质上，我们知道多项式乘法得到的多项式次数界是相乘两个多项式之和的规模，如果用来求点值的数只有相乘多项式的次数界个数，怎么可能求得积的多项式呢？</p>
+<p>相信天机清妙的读者都知道笔者犯了一个概念性错误，FFT实质上并不是在直接求解多项式相乘，它实质上是在做一个循环卷积，溢出的次数会自动累加到其模次数界对应的位置上。</p>
+<p>为什么 FFT 是循环卷积呢？我们令 <span
+class="math inline">\(\mathrm{DFT}(A)_i\)</span> 表示 <span
+class="math inline">\(A\)</span> 这个多项式在 <span
+class="math inline">\(\omega_n^i\)</span> 处的点值，那么 FFT
+的实质上是依赖于这样一个原理： <span
+class="math display">\[\mathrm{DFT}(A)_x\mathrm{DFT}(B)_x=\mathrm{DFT}(C)_x
+\]</span></p>
+<p>令 <span
+class="math inline">\(\omega=\omega_n^x\)</span>，我们将这条式子展开：
+<span class="math display">\[\begin{align}
+\sum_{i=0}^{n-1}A_i\omega^i\sum_{j=0}^{n-1}B_j\omega^j&amp;=\sum_{k=0}^{n-1}C_k\omega^k\\
+&amp;=\sum_{k=0}^{n-1}\sum_{(i+j)\ \mathrm{mod}\ n=k}A_iB_j\omega^k
+\end{align}
+\]</span></p>
+<p>为了使对应项系数恒相等，我们需要有 <span
+class="math inline">\(\omega^i\omega^j=\omega^k\)</span>。</p>
+<p>由于我们选择的是主 <span class="math inline">\(n\)</span>
+次单位复数根，正好 <span
+class="math inline">\(\omega^i\omega^j=\omega^{i+j}=\omega_n^{(i+j)x}=\omega_n^{kx}=\omega^k\)</span>。</p>
+<p>这就是 FFT 算法的一个重要依据。</p>
+<hr />
+<h2 id="快速变换的一般思路">快速变换的一般思路</h2>
+<p>有了上面 FFT 算法的思路，我们来考虑快速卷积运算的一般思路</p>
+<p>定义二元函数 <span class="math inline">\(f(i,j)\)</span>，定义 <span
+class="math display">\[
+\mathrm{trans}(A)_i=\sum_{j=0}^{n-1}A_jf(i,j)
+\]</span></p>
+<p>我们需要针对给定运算的规律，构造函数 <span
+class="math inline">\(f\)</span> 使其满足 <span class="math display">\[
+\mathrm{trans}(A)_x\mathrm{trans}(B)_x=\mathrm{trans}(C)_x \]</span></p>
+<p>在 FFT 中，我们选择了主 <span class="math inline">\(n\)</span>
+次单位复数根：<span
+class="math inline">\(f(i,j)=\omega_n^{ij}\)</span>。</p>
+<p>当然了，这个 <span class="math inline">\(f\)</span>
+函数当然不只是能够满足上面条件就够了，还要方便我计算，不然在时间复杂度上就没有任何改观了。在
+FFT 中，<span class="math inline">\(n\)</span> 个主 <span
+class="math inline">\(n\)</span> 次复数单位根的平方本质上恰好是 <span
+class="math inline">\(n/2\)</span> 个主 <span
+class="math inline">\(n/2\)</span>
+次单位复数根，于是就可以通过分治策略将时间复杂度降至 <span
+class="math inline">\(O(n\log
+n)\)</span>。但是不同运算有不同的性质，对于快速计算的方法我们必须具体情况具体分析。</p>
+<hr />
+<h2 id="fwt-原理">FWT 原理</h2>
+<p>我们先讨论二进制的情况。</p>
+<h3 id="或运算与运算卷积">或运算、与运算卷积</h3>
+<p>首先构造函数 <span class="math inline">\(f\)</span>
+使其满足上面所讲的式子。</p>
+<p>注意到一组比较显然的事实： <span class="math display">\[
+\begin{align}
+i\ \mathrm{or}\ k=k,j\ \mathrm{or}\ k=k&amp;\Rightarrow \left(i\
+\mathrm{or}\ j\right)\ \mathrm{or}\ k=k\\
+i\ \mathrm{and}\ k=k,j\ \mathrm{and}\ k=k&amp;\Rightarrow \left(i\
+\mathrm{and}\ j\right)\ \mathrm{and}\ k=k
+\end{align}
+\]</span></p>
+<p>对于与运算，我们定义 <span class="math inline">\(f(i,j)=[i\
+\mathrm{and}\ j=i]\)</span>；对于或运算我们定义 <span
+class="math inline">\(f(i,j)=[i\ \mathrm{and}\
+j=j]\)</span>。容易验证，这样的 <span class="math inline">\(f\)</span>
+可以满足之前的式子。</p>
+<p>考虑如何计算这个东西？其实它的本质就是给定 <span
+class="math inline">\(\{a_n\}\)</span>，让你计算 <span
+class="math inline">\(\{b_n\}\)</span> 满足 <span
+class="math display">\[
+b_i=\sum_{i\subseteq j}a_j
+\]</span>或者 <span class="math display">\[
+b_i=\sum_{j\subseteq i}a_i
+\]</span></p>
+<p>这是一个很经典的问题。既然是二进制运算，我们就考虑按位分治。</p>
+<p>假设我们现在要算出 <span class="math inline">\([l,r)\)</span>
+区间的答案，<span class="math inline">\([l,mid)\)</span>
+区间二进制首位都是 <span class="math inline">\(0\)</span>，<span
+class="math inline">\([mid,r)\)</span> 区间二进制首位都为 <span
+class="math inline">\(1\)</span>。而右区间的某个数相比左区间的对应位置的二进制（在当前考虑的这么多位二进制下）只是在最高位多了
+<span
+class="math inline">\(1\)</span>，也就是说左边那个状态是右边的子集。然后我们就可以相应地把右（左）边的值加到左（右）边。</p>
+<p>这样我们就可以在 <span class="math inline">\(O(n\log n)\)</span>
+的时间复杂度下完成 FWT 的正过程 (DWT)，那么怎么做逆过程 (IDWT)
+呢？很简单，正过程的时候我们是把其中一项加到另一项，逆过来的时候我们对应地将一项减去另一项就可以解出来了，大家可以自己推算一下。那我们要不要严格按照正过程的倒序（也就是先计算当前区间再递归两边）来执行呢？其实不用，因为这样我只不过是在逆过程时将高低位颠倒考虑而已，对最后结果没有影响，也就是我们只需要在正过程上稍加改动罢了。</p>
+<p>总的时间复杂度就是 <span class="math inline">\(O(n\log n)\)</span>
+的。注意到这个过程只有加减运算，因此在模意义下也不受模数限制。</p>
+<p>代码实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">DWT</span><span class="params">(<span class="type">int</span> *a,<span class="type">int</span> sig)</span>  <span class="comment">//sig:1(DWT)/-1(IDWT)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> l=<span class="number">2</span>;l&lt;=n;l&lt;&lt;=<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>,h=l&gt;&gt;<span class="number">1</span>;i&lt;n;i+=l)</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">int</span> j=<span class="number">0</span>;j&lt;h;++j)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="type">int</span> u=a[i+j],v=a[i+j+h];</span><br><span class="line">				<span class="comment">//and: a[i+j]=u+v*sig;</span></span><br><span class="line">				<span class="comment">//or: a[i+j+d]=v+u*sig;</span></span><br><span class="line">			&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="异或卷积">异或卷积</h3>
+<p>终于说到本博客的重点：异或卷积。异或卷积相比其它卷积构造相对复杂一些，但实现起来也是差不多的。</p>
+<p>异或运算的 <span class="math inline">\(f\)</span>
+基于这样一个事实：我们令 <span
+class="math inline">\(\mathrm{bitcount}(s)\)</span> 表示 <span
+class="math inline">\(s\)</span> 的二进制状态中 <span
+class="math inline">\(1\)</span> 的个数，那么一定有 <span
+class="math inline">\(\mathrm{bitcount}(i\ \mathrm{and}\ k)\)</span>
+的奇偶性异或 <span class="math inline">\(\mathrm{bitcount}(j\
+\mathrm{and}\ k)\)</span> 的奇偶性等于 <span
+class="math inline">\(\mathrm{bitcount}\left((i\ \mathrm{xor}\ j)\
+\mathrm{and}\ k\right)\)</span> 的奇偶性。</p>
+<p>于是我们定义 <span
+class="math inline">\(f(i,j)=(-1)^{\mathrm{bitcount}(i\ \mathrm{and}\
+j)}\)</span>，这样我们的 <span class="math inline">\(f\)</span>
+就满足要求了。</p>
+<p>这个东西怎么快速计算呢？依然按位考虑，我们令 <span
+class="math inline">\(f_0\)</span> 表示一个元素在 <span
+class="math inline">\([l,mid)\)</span> 中对应位置的值，<span
+class="math inline">\(f_1\)</span> 表示在 <span
+class="math inline">\([mid,r)\)</span> 区间中对应位置的值。对于一个位于
+<span class="math inline">\([l,mid)\)</span> 的元素，那么它的 <span
+class="math inline">\(f\)</span> 显然等于 <span
+class="math inline">\(f_0+f_1\)</span>，因为它最高位加入的数是 <span
+class="math inline">\(0\)</span>，所以不论原本的值来自那一边，都不会影响奇偶性。而位于
+<span class="math inline">\([mid,r)\)</span> 的元素就是 <span
+class="math inline">\(f=f_0-f_1\)</span>，因为在右半边两个二进制最高位都加入了
+<span
+class="math inline">\(1\)</span>，会导致奇偶性变化，而左边就不会。</p>
+<p>至于逆变换，考虑到我们相当于知道了 <span
+class="math inline">\(a+b\)</span> 和 <span
+class="math inline">\(a-b\)</span>，那么只需要简单的加减消元即可以解出两个值。</p>
+<p>时间复杂度是 <span class="math inline">\(O(n\log n)\)</span>
+的。注意到这个过程虽然有除以 <span class="math inline">\(2\)</span>
+的运算，但是即使题目要求对一个一般的数取模，在通常情况下我们还是可以消除它的影响。因为
+<span class="math inline">\(\frac xa\ \mathrm{mod}\ p=\frac{x\
+\mathrm{mod}\ pa}a\)</span>，我们直接将模数乘上次数界（也就是 <span
+class="math inline">\(2\)</span> 的某次幂），在做逆过程的时候不除 <span
+class="math inline">\(2\)</span>，最后将答案除以次数界就好了。</p>
+<p>时间复杂度 <span class="math inline">\(O(n\log n)\)</span>。</p>
+<p>代码实现（没有了除以 <span class="math inline">\(2\)</span>
+正逆变换没有区别）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">DWT</span><span class="params">(<span class="type">int</span> *a)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> l=<span class="number">2</span>;l&lt;=n;l&lt;&lt;=<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>,h=l&gt;&gt;<span class="number">1</span>;i&lt;n;i+=l)</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">int</span> j=<span class="number">0</span>;j&lt;h;++j)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="type">int</span> u=a[i+j],v=a[i+j+h];</span><br><span class="line">				a[i+j]=u+v,a[i+j+h]=u-v;</span><br><span class="line">			&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="k-进制下的异或卷积"><span class="math inline">\(K\)</span>
+进制下的异或卷积</h3>
+<p>考虑沿袭二进制下的思路，对于二进制我们定义了 <span
+class="math inline">\(f(i,j)=(-1)^{\mathrm{bitcount}(i\ \mathrm{and}\
+j)}\)</span>。现在我们考虑一下这个东西在推广以后的本质，其实这里面的
+<span class="math inline">\(\mathrm{and}\)</span> 就是 <span
+class="math inline">\(K\)</span> 进制下的不进位乘法，所谓 <span
+class="math inline">\(\mathrm{bitcount}(s)\)</span>
+其实就是将所有的位加起来对<span
+class="math inline">\(K\)</span>取模。然后我们希望能有一个相关的特征性的函数
+<span class="math inline">\(g\)</span>，能体现出这 <span
+class="math inline">\(K\)</span> 个可能的取值，满足 <span
+class="math inline">\(g(i)g(j)=g\left((i+j)\ \mathrm{mod}
+K\right)\)</span>。</p>
+<p>相信大家都发现 FFT 中的主 <span class="math inline">\(n\)</span>
+次单位复数根可以胜任此位，也就是我们令 <span
+class="math inline">\(\omega\)</span> 为主 <span
+class="math inline">\(K\)</span> 次单位复数根，那么 <span
+class="math inline">\(g(i)=\omega^i\)</span>，也就是 <span
+class="math inline">\(f(i,j)=\omega^{\mathrm{bitcount}_k(i\
+\mathrm{and}_k\ j)}\)</span>。</p>
+<p>那我们这样怎么快速做正变换呢？和二进制其实是类似的，对于区间 <span
+class="math inline">\([l,r)\)</span>，我们按照最高位将其分成 <span
+class="math inline">\(K\)</span>
+个长度相等的区间，然后考虑在这些区间中位于同样对应位置的数。</p>
+<p>假设这些数是 <span
+class="math inline">\(F_0,F_1,\dots,F_{K-2},F_{K-1}\)</span>，假设我们要的值是
+<span
+class="math inline">\(f_0,f_1,\dots,f_{K-2},f_{K-1}\)</span>，那么就有
+<span class="math display">\[
+f_i=\sum_{j=0}^{K-1}F_j\omega^{ij}
+\]</span></p>
+<p>逆变换怎么做呢？我们考虑对于一个分治区间，实质上我们进行的是类似 FFT
+过程的一个矩阵乘法：</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+1 &amp; 1 &amp; 1 &amp; \cdots &amp; 1 \\
+1 &amp; \omega &amp; \omega^2 &amp; \cdots &amp; \omega^{K-1} \\
+1 &amp; \omega^2 &amp; \omega^4 &amp; \cdots &amp; \omega^{2(K-1)} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; \omega^{K-1} &amp; \omega^{(K-1)2} &amp; \cdots &amp;
+\omega^{(K-1)(K-1)}
+\end{pmatrix}\begin{pmatrix}
+F_0\\
+F_1\\
+F_2\\
+\vdots\\
+F_{K-1}
+\end{pmatrix}=\begin{pmatrix}
+f_0\\
+f_1\\
+f_2\\
+\vdots\\
+f_{K-1}
+\end{pmatrix}
+\]</span></p>
+<p>我们只需要在等式两边左乘一个系数矩阵的逆矩阵就好了，学过 FFT
+的都知道，根据求和引理可以验证逆矩阵：</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\frac 1K &amp; \frac 1K &amp; \frac 1K &amp; \cdots &amp; \frac 1K \\
+\frac 1K &amp; \frac{\omega^{-1}}K &amp; \frac{\omega^{-2}}K &amp;
+\cdots &amp; \frac{\omega^{-(K-1)}}K \\
+\frac 1K &amp; \frac{\omega^{-2}}K &amp; \frac{\omega^{-4}}K &amp;
+\cdots &amp; \frac{\omega^{-2(K-1)}}K \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\frac 1K &amp; \frac{\omega^{-(K-1)}}K &amp; \frac{\omega^{-(K-1)2}}K
+&amp; \cdots &amp; \frac{\omega^{-(K-1)(K-1)}}K
+\end{pmatrix}
+\]</span></p>
+<p>因此我们在逆过程的时候只需要把次幂取相反数，最后再除去次数界就好了。</p>
+<p>相信看到这里大家都明白为什么说“（<span
+class="math inline">\(K\)</span> 进制下）FWT 为每一维大小为 <span
+class="math inline">\(2\)</span>(<span class="math inline">\(K\)</span>)
+的高维快速傅里叶变换了”。</p>
+<p>可以用类似的实现过程，复杂度是 <span
+class="math inline">\(T(n)=KT\left(\frac nK\right)+O(Kn)\)</span>，即
+<span class="math inline">\(O(Kn\log_K n)\)</span>。</p>
+<p>对于（对质数）取模的情况，我们考虑原根 <span
+class="math inline">\(g\)</span>。显然类似 NTT 那样取 <span
+class="math inline">\(\omega=g^{\frac{P-1}K}\)</span>，就可以做到主<span
+class="math inline">\(K\)</span>次单位复数根的效果。不过这样做比起 NTT
+对模数的要求就还要更苛刻一些了，它必须是 <span
+class="math inline">\(K\)</span> 的某一个倍数加 <span
+class="math inline">\(1\)</span>。<span
+class="math inline">\(330301441\)</span> 这个质数是能够对 <span
+class="math inline">\(10\)</span> 以内的所有 <span
+class="math inline">\(K\)</span> 做 <span
+class="math inline">\(K\)</span> 进制异或卷积的。</p>
+<p>代码实现（这次贴一个比较完整的）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">DWT</span><span class="params">(<span class="type">int</span> *a,<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> l=K;l&lt;=len;l*=K)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>;i&lt;len;++i) b[i]=a[i];</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>,h=l/K;i&lt;len;i+=l)</span><br><span class="line">			<span class="keyword">for</span> (<span class="type">int</span> j=<span class="number">0</span>;j&lt;h;++j)</span><br><span class="line">				<span class="keyword">for</span> (<span class="type">int</span> k=<span class="number">0</span>;k&lt;K;++k)</span><br><span class="line">				&#123;</span><br><span class="line">					a[i+j+k*h]=<span class="number">0</span>;</span><br><span class="line">					<span class="keyword">for</span> (<span class="type">int</span> k_=<span class="number">0</span>;k_&lt;K;++k_) (a[i+j+k*h]+=<span class="number">1ll</span>*b[i+j+k_*h]*POW[(k*k_%K*sig+K)%K]%P)%=P;</span><br><span class="line">				&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">calc</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (len=<span class="number">1</span>;len&lt;=mx;len*=K);</span><br><span class="line">	POW[<span class="number">0</span>]=<span class="number">1</span>,omega=<span class="built_in">quick_power</span>(G,(P<span class="number">-1</span>)/K);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>;i&lt;=K;++i) POW[i]=<span class="number">1ll</span>*POW[i<span class="number">-1</span>]*omega%P;</span><br><span class="line">	<span class="built_in">DWT</span>(A,<span class="number">1</span>),<span class="built_in">DWT</span>(B,<span class="number">1</span>);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>;i&lt;len;++i) C[i]=<span class="number">1ll</span>*A[i]*B[i]%P;</span><br><span class="line">	<span class="built_in">DWT</span>(C,<span class="number">-1</span>);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>,inv=<span class="built_in">quick_power</span>(len,P<span class="number">-2</span>);i&lt;len;++i) C[i]=<span class="number">1ll</span>*C[i]*inv%P;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="总结">总结</h2>
+<p>这次笔者是为了做掉 CC October Long Challenge 2017 里面的那一道
+XORTREEH 才突击学习一下 FWT 的，收获还挺大的，首先纠正了自己对 FFT
+的错误认识，其次对于这一类快速变换算法的基本原理有了更加深刻的理解。将二进制的异或卷积推广到
+<span class="math inline">\(K\)</span>
+进制下的工作是笔者独立完成的，可以说是受益匪浅了，起码印象深刻以后都不怎么会忘记了，大家也可以试着自己搞一搞。</p>
+<p><del>好久没有写过这么长的博客了……</del></p>
+<hr />
+<h2 id="参考资料">参考资料</h2>
+<p><a
+target="_blank" rel="noopener" href="http://blog.csdn.net/neither_nor/article/details/60335099">neither_nor,
+FWT 详解 知识点</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/y-clever/p/6875743.html">_rqy, Fast
+Walsh-Hadamard Transform——快速沃尔什变换</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/y-clever/p/6979925.html">_rqy, Fast
+Walsh-Hadamard Transform——快速沃尔什变换（二）</a></p>
+<p><a
+target="_blank" rel="noopener" href="http://picks.logdown.com/posts/179290-fast-walsh-hadamard-transform">Picks,
+Fast Walsh-Hadamard Transform</a></p>
+<p>吕凯风, 集合幂级数的性质与应用及其快速算法,
+2015年信息学奥林匹克中国国家队候选队员论文集</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/FFT-NTT-FWT/" rel="tag"># FFT/NTT/FWT</a>
+              <a href="/blog/tags/%E6%9E%84%E9%80%A0/" rel="tag"># 构造</a>
+              <a href="/blog/tags/%E6%95%B0%E8%AE%BA/" rel="tag"># 数论</a>
+              <a href="/blog/tags/%E7%9F%A9%E9%98%B5/" rel="tag"># 矩阵</a>
+              <a href="/blog/tags/%E5%8E%9F%E6%A0%B9/" rel="tag"># 原根</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2017/10/20/codechef-OCT17/" rel="prev" title="CodeChef October Long Challenge 2017 Solution">
+      <i class="fa fa-chevron-left"></i> CodeChef October Long Challenge 2017 Solution
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fft-%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">FFT 原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%8F%98%E6%8D%A2%E7%9A%84%E4%B8%80%E8%88%AC%E6%80%9D%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">快速变换的一般思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fwt-%E5%8E%9F%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">FWT 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%96%E8%BF%90%E7%AE%97%E4%B8%8E%E8%BF%90%E7%AE%97%E5%8D%B7%E7%A7%AF"><span class="nav-number">4.1.</span> <span class="nav-text">或运算、与运算卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%88%96%E5%8D%B7%E7%A7%AF"><span class="nav-number">4.2.</span> <span class="nav-text">异或卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#k-%E8%BF%9B%E5%88%B6%E4%B8%8B%E7%9A%84%E5%BC%82%E6%88%96%E5%8D%B7%E7%A7%AF"><span class="nav-number">4.3.</span> <span class="nav-text">\(K\)
+进制下的异或卷积</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Ziyi Cai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ziyi Cai</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/muse.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

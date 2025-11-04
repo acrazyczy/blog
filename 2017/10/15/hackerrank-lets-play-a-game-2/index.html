@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ziyi-cai.site","root":"/blog/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="题目大意 给定一个 \(1\times n\) 的格子图。每一个格子都有着一种颜色（红蓝绿白之一）。每个格子上都有一定数量的硬币，不同的格子的硬币数一定是不同的。 你需要从格子图任选一个格子作为开始位置，每次你可以从一个格子跳到图中另外一个没有访问过的格子上。 跳格子有一个规则：从红色或者蓝色格子只能跳到绿色或白色格子上，从绿色或白色格子只能跳到红色或蓝色格子上。 你要一直跳到没有能够继续跳的格子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HackerRank - Moody&#39;s Analytics Fall University CodeSprint - Let&#39;s Play a Game">
+<meta property="og:url" content="https://ziyi-cai.site/blog/2017/10/15/hackerrank-lets-play-a-game-2/index.html">
+<meta property="og:site_name" content="crazy_cloud&#39;s Blog">
+<meta property="og:description" content="题目大意 给定一个 \(1\times n\) 的格子图。每一个格子都有着一种颜色（红蓝绿白之一）。每个格子上都有一定数量的硬币，不同的格子的硬币数一定是不同的。 你需要从格子图任选一个格子作为开始位置，每次你可以从一个格子跳到图中另外一个没有访问过的格子上。 跳格子有一个规则：从红色或者蓝色格子只能跳到绿色或白色格子上，从绿色或白色格子只能跳到红色或蓝色格子上。 你要一直跳到没有能够继续跳的格子">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-10-15T23:14:17.000Z">
+<meta property="article:modified_time" content="2025-11-04T03:38:24.975Z">
+<meta property="article:author" content="Ziyi Cai">
+<meta property="article:tag" content="HackerRank">
+<meta property="article:tag" content="二分图">
+<meta property="article:tag" content="分类讨论">
+<meta property="article:tag" content="定理题">
+<meta property="article:tag" content="构造">
+<meta property="article:tag" content="贪心">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ziyi-cai.site/blog/2017/10/15/hackerrank-lets-play-a-game-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>HackerRank - Moody's Analytics Fall University CodeSprint - Let's Play a Game | crazy_cloud's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">crazy_cloud's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ziyi-cai.site/blog/2017/10/15/hackerrank-lets-play-a-game-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="Ziyi Cai">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="crazy_cloud's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HackerRank - Moody's Analytics Fall University CodeSprint - Let's Play a Game
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-10-15 19:14:17" itemprop="dateCreated datePublished" datetime="2017-10-15T19:14:17-04:00">2017-10-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-11-03 22:38:24" itemprop="dateModified" datetime="2025-11-03T22:38:24-05:00">2025-11-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/%E8%A7%A3%E9%A2%98%E6%8A%A5%E5%91%8A/" itemprop="url" rel="index"><span itemprop="name">解题报告</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="题目大意">题目大意</h2>
+<p>给定一个 <span class="math inline">\(1\times n\)</span>
+的格子图。每一个格子都有着一种颜色（红蓝绿白之一）。每个格子上都有一定数量的硬币，不同的格子的硬币数一定是不同的。</p>
+<p>你需要从格子图任选一个格子作为开始位置，每次你可以从一个格子跳到图中另外一个没有访问过的格子上。</p>
+<p>跳格子有一个规则：从红色或者蓝色格子只能跳到绿色或白色格子上，从绿色或白色格子只能跳到红色或蓝色格子上。</p>
+<p>你要一直跳到没有能够继续跳的格子为止。将你经过的所有格子的硬币数记录成一个序列，我们希望最大化这个序列的最长上升子序列长度。</p>
+<p><span class="math inline">\(1\leq n\leq4\times10^5\)</span>
+<span id="more"></span> —</p>
+<h2 id="题目分析">题目分析</h2>
+<p>HackerRank 居然出论文题。</p>
+<p>首先题目四种颜色本质就是两种颜色，问题变成在一个带点权完全二分图上找到一条路径使其最长上升子序列最长。</p>
+<p>然后这个玩意儿居然有人研究……结论是：假设 <span
+class="math inline">\(|X|\geq|Y|\)</span> ，一定存在一个 <span
+class="math inline">\(\mathrm{LIS}\)</span> 包含了 <span
+class="math inline">\(|Y|\)</span> 部的所有点。</p>
+<p>然后就很方便了，我们直接去构造这个 <span
+class="math inline">\(\mathrm{LIS}\)</span>：把两个部的点都按权值排好序，然后把
+<span class="math inline">\(|X|\)</span> 部的点尽可能多地插入到 <span
+class="math inline">\(|Y|\)</span> 部的相邻两个元素中就好了。</p>
+<p>时间复杂度 <span class="math inline">\(O(n\log n)\)</span>。</p>
+<p>证明？咳咳比较复杂，限(wo)于(bi)篇(jiao)幅(lan)就不在这里展开了。可以看一下参考文献。</p>
+<p>思路就是证明只要 <span class="math inline">\(\mathrm{LIS}\)</span>
+没有完全包含 <span class="math inline">\(|Y|\)</span>
+部的点，一定存在一种原本基础上的构造能够使新的 <span
+class="math inline">\(\mathrm{LIS}\)</span> 在 <span
+class="math inline">\(Y\)</span> 部的点数恰好多 <span
+class="math inline">\(1\)</span>。</p>
+<p>中间都是一些分类讨论和反证。</p>
+<hr />
+<h2 id="代码实现">代码实现</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cctype&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="type">int</span> <span class="title">read</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span> x=<span class="number">0</span>,f=<span class="number">1</span>;</span><br><span class="line">	<span class="type">char</span> ch=<span class="built_in">getchar</span>();</span><br><span class="line">	<span class="keyword">while</span> (!<span class="built_in">isdigit</span>(ch)) f=ch==<span class="string">&#x27;-&#x27;</span>?<span class="number">-1</span>:f,ch=<span class="built_in">getchar</span>();</span><br><span class="line">	<span class="keyword">while</span> (<span class="built_in">isdigit</span>(ch)) x=x*<span class="number">10</span>+ch-<span class="string">&#x27;0&#x27;</span>,ch=<span class="built_in">getchar</span>();</span><br><span class="line">	<span class="keyword">return</span> x*f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N=<span class="number">400005</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> nodes[<span class="number">2</span>][N];</span><br><span class="line"><span class="type">char</span> str[N];</span><br><span class="line"><span class="type">int</span> a[N];</span><br><span class="line"><span class="type">int</span> n,ans,cnt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">greedy</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (!nodes[<span class="number">0</span>][<span class="number">0</span>])</span><br><span class="line">	&#123;</span><br><span class="line">		ans=nodes[<span class="number">1</span>][<span class="number">0</span>]&gt;<span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	ans=nodes[<span class="number">0</span>][<span class="number">0</span>];</span><br><span class="line">	<span class="type">int</span> head=<span class="number">1</span>,tail=nodes[<span class="number">1</span>][<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">if</span> (nodes[<span class="number">1</span>][<span class="number">0</span>]&gt;nodes[<span class="number">0</span>][<span class="number">0</span>])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nodes[<span class="number">1</span>][head]&lt;nodes[<span class="number">0</span>][<span class="number">1</span>]) ++ans,++head;</span><br><span class="line">		<span class="keyword">if</span> (head&lt;=tail&amp;&amp;nodes[<span class="number">1</span>][tail]&gt;nodes[<span class="number">0</span>][nodes[<span class="number">0</span>][<span class="number">0</span>]]) ++ans,--tail;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (nodes[<span class="number">1</span>][head]&lt;nodes[<span class="number">0</span>][<span class="number">1</span>]) ++ans,++head;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (nodes[<span class="number">1</span>][tail]&gt;nodes[<span class="number">0</span>][nodes[<span class="number">0</span>][<span class="number">0</span>]]) ++ans,--tail;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>;i&lt;nodes[<span class="number">0</span>][<span class="number">0</span>];++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (;head&lt;=tail&amp;&amp;nodes[<span class="number">1</span>][head]&lt;nodes[<span class="number">0</span>][i];++head);</span><br><span class="line">		ans+=head&lt;=tail&amp;&amp;nodes[<span class="number">1</span>][head]&lt;nodes[<span class="number">0</span>][i<span class="number">+1</span>];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">freopen</span>(<span class="string">&quot;game.in&quot;</span>,<span class="string">&quot;r&quot;</span>,stdin),<span class="built_in">freopen</span>(<span class="string">&quot;game.out&quot;</span>,<span class="string">&quot;w&quot;</span>,stdout);</span><br><span class="line">	n=<span class="built_in">read</span>(),<span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>,str),cnt=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>;i&lt;n;++i) cnt+=str[i]==<span class="string">&#x27;B&#x27;</span>||str[i]==<span class="string">&#x27;R&#x27;</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">1</span>,x;i&lt;=n;++i) x=(str[i<span class="number">-1</span>]==<span class="string">&#x27;B&#x27;</span>||str[i<span class="number">-1</span>]==<span class="string">&#x27;R&#x27;</span>)^(cnt*<span class="number">2</span>&lt;=n),nodes[x][++nodes[x][<span class="number">0</span>]]=<span class="built_in">read</span>();</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">2</span>;++i) <span class="built_in">sort</span>(nodes[i]<span class="number">+1</span>,nodes[i]<span class="number">+1</span>+nodes[i][<span class="number">0</span>]);</span><br><span class="line">	<span class="built_in">greedy</span>(),<span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,ans);</span><br><span class="line">	<span class="built_in">fclose</span>(stdin),<span class="built_in">fclose</span>(stdout);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="参考文献">参考文献</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;Lin2012FindingAL,</span><br><span class="line">  title=&#123;Finding a Longest Increasing Subsequence from the Paths in a Complete Bipartite Graph&#125;,</span><br><span class="line">  author=&#123;Guan-Yu Lin and Jia-Jie Liu and Yue-Li Wang&#125;,</span><br><span class="line">  year=&#123;2012&#125;,</span><br><span class="line">  url=&#123;https://api.semanticscholar.org/CorpusID:18850482&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/%E8%B4%AA%E5%BF%83/" rel="tag"># 贪心</a>
+              <a href="/blog/tags/%E6%9E%84%E9%80%A0/" rel="tag"># 构造</a>
+              <a href="/blog/tags/%E5%88%86%E7%B1%BB%E8%AE%A8%E8%AE%BA/" rel="tag"># 分类讨论</a>
+              <a href="/blog/tags/%E4%BA%8C%E5%88%86%E5%9B%BE/" rel="tag"># 二分图</a>
+              <a href="/blog/tags/HackerRank/" rel="tag"># HackerRank</a>
+              <a href="/blog/tags/%E5%AE%9A%E7%90%86%E9%A2%98/" rel="tag"># 定理题</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2017/10/15/hdu6073/" rel="prev" title="HDU6073 Matching In Multiplication">
+      <i class="fa fa-chevron-left"></i> HDU6073 Matching In Multiplication
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2017/10/20/codechef-OCT17/" rel="next" title="CodeChef October Long Challenge 2017 Solution">
+      CodeChef October Long Challenge 2017 Solution <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F"><span class="nav-number">1.</span> <span class="nav-text">题目大意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">题目分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Ziyi Cai</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ziyi Cai</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/muse.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
