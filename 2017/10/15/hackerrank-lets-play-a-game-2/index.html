@@ -28,7 +28,7 @@
 <meta property="og:description" content="题目大意 给定一个 \(1\times n\) 的格子图。每一个格子都有着一种颜色（红蓝绿白之一）。每个格子上都有一定数量的硬币，不同的格子的硬币数一定是不同的。 你需要从格子图任选一个格子作为开始位置，每次你可以从一个格子跳到图中另外一个没有访问过的格子上。 跳格子有一个规则：从红色或者蓝色格子只能跳到绿色或白色格子上，从绿色或白色格子只能跳到红色或蓝色格子上。 你要一直跳到没有能够继续跳的格子">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2017-10-15T23:14:17.000Z">
-<meta property="article:modified_time" content="2025-11-05T02:36:17.606Z">
+<meta property="article:modified_time" content="2025-11-08T03:41:34.564Z">
 <meta property="article:author" content="Ziyi Cai">
 <meta property="article:tag" content="HackerRank">
 <meta property="article:tag" content="二分图">
@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-11-04 21:36:17" itemprop="dateModified" datetime="2025-11-04T21:36:17-05:00">2025-11-04</time>
+                <time title="Modified: 2025-11-07 22:41:34" itemprop="dateModified" datetime="2025-11-07T22:41:34-05:00">2025-11-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -216,7 +216,8 @@
 <p>跳格子有一个规则：从红色或者蓝色格子只能跳到绿色或白色格子上，从绿色或白色格子只能跳到红色或蓝色格子上。</p>
 <p>你要一直跳到没有能够继续跳的格子为止。将你经过的所有格子的硬币数记录成一个序列，我们希望最大化这个序列的最长上升子序列长度。</p>
 <p><span class="math inline">\(1\leq n\leq4\times10^5\)</span></p>
-<h2 id="section"><span id="more"></span></h2>
+<span id="more"></span>
+<hr />
 <h2 id="题目分析">题目分析</h2>
 <p>HackerRank 居然出论文题。</p>
 <p>首先题目四种颜色本质就是两种颜色，问题变成在一个带点权完全二分图上找到一条路径使其最长上升子序列最长。</p>
@@ -252,10 +253,10 @@ class="math inline">\(1\)</span>。</p>
 
       <footer class="post-footer">
           <div class="post-tags">
+              <a href="/blog/tags/%E4%BA%8C%E5%88%86%E5%9B%BE/" rel="tag"># 二分图</a>
               <a href="/blog/tags/%E8%B4%AA%E5%BF%83/" rel="tag"># 贪心</a>
               <a href="/blog/tags/%E6%9E%84%E9%80%A0/" rel="tag"># 构造</a>
               <a href="/blog/tags/%E5%88%86%E7%B1%BB%E8%AE%A8%E8%AE%BA/" rel="tag"># 分类讨论</a>
-              <a href="/blog/tags/%E4%BA%8C%E5%88%86%E5%9B%BE/" rel="tag"># 二分图</a>
               <a href="/blog/tags/HackerRank/" rel="tag"># HackerRank</a>
               <a href="/blog/tags/%E5%AE%9A%E7%90%86%E9%A2%98/" rel="tag"># 定理题</a>
           </div>
@@ -331,7 +332,7 @@ class="math inline">\(1\)</span>。</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F"><span class="nav-number">1.</span> <span class="nav-text">题目大意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section"><span class="nav-number">2.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">题目分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F"><span class="nav-number">1.</span> <span class="nav-text">题目大意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">题目分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -345,7 +346,7 @@ class="math inline">\(1\)</span>。</p>
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -354,7 +355,7 @@ class="math inline">\(1\)</span>。</p>
         <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

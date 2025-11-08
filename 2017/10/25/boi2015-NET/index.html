@@ -28,7 +28,7 @@
 <meta property="og:description" content="题目大意 给定一颗 \(n\) 个点的无根树，求最少加多少条边使形成的图形任意删除一条边后都联通，边是无向的。 输出最少加边数和任意一种加边方案。注意不能加已出现的边。 \(3\leq n\leq 5\times10^5\)">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2017-10-26T01:25:44.000Z">
-<meta property="article:modified_time" content="2025-11-05T02:36:04.778Z">
+<meta property="article:modified_time" content="2025-11-08T03:41:02.666Z">
 <meta property="article:author" content="Ziyi Cai">
 <meta property="article:tag" content="BOI">
 <meta property="article:tag" content="归纳">
@@ -185,7 +185,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-11-04 21:36:04" itemprop="dateModified" datetime="2025-11-04T21:36:04-05:00">2025-11-04</time>
+                <time title="Modified: 2025-11-07 22:41:02" itemprop="dateModified" datetime="2025-11-07T22:41:02-05:00">2025-11-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -213,7 +213,8 @@
 个点的无根树，求最少加多少条边使形成的图形任意删除一条边后都联通，边是无向的。</p>
 <p>输出最少加边数和任意一种加边方案。注意不能加已出现的边。</p>
 <p><span class="math inline">\(3\leq n\leq 5\times10^5\)</span></p>
-<h2 id="section"><span id="more"></span></h2>
+<span id="more"></span>
+<hr />
 <h2 id="题目分析">题目分析</h2>
 <p>一道很套路的题目，想想还是写出来吧。</p>
 <p>首先显然连接的边都是叶子肯定不会比其他方案要劣。然后问题变成选出尽量少的起点和终点都是叶子节点的路径覆盖完树上所有边。</p>
@@ -333,7 +334,7 @@ class="math inline">\(1\)</span> 是显然成立的。证毕。</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F"><span class="nav-number">1.</span> <span class="nav-text">题目大意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section"><span class="nav-number">2.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">题目分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码实现</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%A4%A7%E6%84%8F"><span class="nav-number">1.</span> <span class="nav-text">题目大意</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">题目分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">代码实现</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -347,7 +348,7 @@ class="math inline">\(1\)</span> 是显然成立的。证毕。</p>
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -356,7 +357,7 @@ class="math inline">\(1\)</span> 是显然成立的。证毕。</p>
         <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
